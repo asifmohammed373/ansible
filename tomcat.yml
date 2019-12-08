@@ -1,0 +1,27 @@
+---
+- hosts: all
+  become: yes 
+  gather_facts: false
+  tasks:
+    
+    - name: installing java
+      apt: name=openjdk-8-jdk
+           state=present 
+
+    - name: downloading tomcat
+      get_url: url=http://apachemirror.wuchna.com/tomcat/tomcat-9/v9.0.29/bin/apache-tomcat-9.0.29.tar.gz
+               dest=/root
+
+    - name: extract tomcat
+      unarchive: src=/root/apache-tomcat-9.0.29.tar.gz
+                 dest=/root
+                 remote_src=yes
+
+    - name: copy war file into tomcat
+      copy: src=/root/vprofile/target/vprofile-v1.war
+            dest=/root/apache-tomcat-9.0.29/webapps
+ 
+    - name: Tomcat service started
+      shell: nohup /root/apache-tomcat-9.0.29/bin/startup.sh &
+    
+...
